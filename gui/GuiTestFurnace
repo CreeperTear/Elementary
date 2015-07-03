@@ -1,0 +1,57 @@
+package com.tyde.elementary.gui;
+
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+
+import com.tyde.elementary.Elementary;
+import com.tyde.elementary.tileentity.TileEntityTestFurnace;
+import com.tyde.elementary.container.ContainerTestFurnace;
+
+public class GuiTestFurnace extends GuiContainer {
+
+	public static final ResourceLocation background = new ResourceLocation(Elementary.MODID + ":" + "textures/gui/guiTestFurnace.png");
+	
+	public TileEntityTestFurnace testFurnace;
+	
+	public GuiTestFurnace(InventoryPlayer inventoryPlayer, TileEntityTestFurnace entity) {
+		super(new ContainerTestFurnace(inventoryPlayer, entity));
+		
+		this.testFurnace = entity;
+		
+		this.xSize = 176;
+		this.ySize = 166;
+	}
+	
+	public void drawGuiContainerForegroundLayer(int par1, int par2) {
+		String name = this.testFurnace.hasCustomInventoryName() ? this.testFurnace.getInventoryName() : I18n.format(this.testFurnace.getInventoryName(), new Object[0]);
+		
+		this.fontRendererObj.drawString(name, this.xSize / 2 - this.fontRendererObj.getStringWidth(name) / 2, 6, 4210752);
+		this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 8 /*x location*/, this.ySize - 96 + 2, 4210752);
+	}
+	
+	
+	
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float var1, int var2, int var3) {
+		GL11.glColor4f(1F, 1F, 1F, 1F);
+		
+		Minecraft.getMinecraft().getTextureManager().bindTexture(background);
+		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+		
+		if (this.testFurnace.isBurning()) {
+			int k = this.testFurnace.getBurnTimeRemainingScaled(14); //14 = width of flame in gui
+			int j = 14 - k;
+			drawTexturedModalRect(guiLeft + 57, guiTop + 35, 176, 0, 14 - j, 14); //location of flameframe from left, location from right, location of flame image (x), loc of flame image (y)
+			
+		}
+		int k = this.testFurnace.getCookProgressScaled(24); //24 = width of arrow in gui
+		drawTexturedModalRect(guiLeft + 79, guiTop + 35, 176, 14, k + 1, 16);
+	}
+	
+
+}
